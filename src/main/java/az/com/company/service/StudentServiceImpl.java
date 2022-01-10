@@ -2,6 +2,7 @@ package az.com.company.service;
 
 import az.com.company.dao.StudentDao;
 import az.com.company.model.Student;
+import az.com.company.request.RequestStudent;
 import az.com.company.response.ResponseStatus;
 import az.com.company.response.ResponseStudent;
 import az.com.company.response.ResponseStudentList;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -72,6 +74,88 @@ public class StudentServiceImpl implements StudentService {
             response.setStatus(new ResponseStatus(ExceptionConstants.INTERNAL_EXCEPTION, "Internal Exception"));
         }
         return response;
+    }
+
+    @Override
+    public ResponseStatus addStudent(RequestStudent requestStudent) {
+        ResponseStatus responseStatus = null;
+        String name = requestStudent.getName();
+        String surname = requestStudent.getSurname();
+        Date dob = requestStudent.getDob();
+        String address = requestStudent.getAddress();
+        String phone = requestStudent.getPhone();
+        try {
+            if (name == null || surname == null) {
+                return new ResponseStatus(ExceptionConstants.INVALID_REQUEST_DATA, "Invalid request data");
+            }
+            Student student = new Student();
+            student.setName(name);
+            student.setSurname(surname);
+            student.setDob(dob);
+            student.setAddress(address);
+            student.setPhone(phone);
+            studentDao.addStudent(student);
+            responseStatus = ResponseStatus.getSuccessMessage();
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            responseStatus = new ResponseStatus(ExceptionConstants.INTERNAL_EXCEPTION, "Internal exception");
+        }
+        return null;
+    }
+
+    @Override
+    public ResponseStatus updateStudent(RequestStudent requestStudent) {
+        ResponseStatus responseStatus = null;
+        Long studentId = requestStudent.getStudentId();
+        String name = requestStudent.getName();
+        String surname = requestStudent.getSurname();
+        Date dob = requestStudent.getDob();
+        String address = requestStudent.getAddress();
+        String phone = requestStudent.getPhone();
+        try {
+            if (studentId == null || name == null || surname == null) {
+                return new ResponseStatus(ExceptionConstants.INVALID_REQUEST_DATA, "Invalid request data");
+            }
+            Student student = studentDao.getStudentById(studentId);
+            if (student == null) {
+                responseStatus = new ResponseStatus(ExceptionConstants.STUDENT_NOT_FOUND, "Student not found");
+                return responseStatus;
+            }
+            student.setName(name);
+            student.setSurname(surname);
+            student.setDob(dob);
+            student.setAddress(address);
+            student.setPhone(phone);
+            studentDao.updateStudent(student);
+            responseStatus = ResponseStatus.getSuccessMessage();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            responseStatus = new ResponseStatus(ExceptionConstants.INTERNAL_EXCEPTION, "Internal exception");
+        }
+        return responseStatus;
+    }
+
+    @Override
+    public ResponseStatus deleteStudent(Long studentId) {
+        ResponseStatus responseStatus = null;
+        try {
+            if (studentId == null) {
+                responseStatus = new ResponseStatus(ExceptionConstants.INVALID_REQUEST_DATA, "Invalid request data");
+                return responseStatus;
+            }
+            Student student = studentDao.getStudentById(studentId);
+            if (student == null) {
+                responseStatus = new ResponseStatus(ExceptionConstants.STUDENT_NOT_FOUND, "Student not found");
+                return responseStatus;
+            }
+            studentDao.deleteStudent(studentId);
+            responseStatus = ResponseStatus.getSuccessMessage();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            responseStatus = new ResponseStatus(ExceptionConstants.INTERNAL_EXCEPTION, "Internal exception");
+        }
+        return responseStatus;
     }
 
 

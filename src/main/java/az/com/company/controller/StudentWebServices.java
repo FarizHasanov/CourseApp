@@ -1,5 +1,7 @@
 package az.com.company.controller;
 
+import az.com.company.request.RequestStudent;
+import az.com.company.response.ResponseStatus;
 import az.com.company.response.ResponseStudent;
 import az.com.company.response.ResponseStudentList;
 import az.com.company.service.StudentService;
@@ -21,5 +23,20 @@ public class StudentWebServices {
     @GetMapping(value = "/getStudentById")
     public ResponseStudent getStudentById(@RequestParam("studentId") Long studentId){
         return studentService.getStudentById(studentId);
+    }
+
+    @PostMapping(value = "/addStudent")
+    public ResponseStatus addStudent(@RequestBody RequestStudent requestStudent){
+        return studentService.addStudent(requestStudent);
+    }
+
+    @PutMapping(value = "/updateStudent")
+    public ResponseStatus updateStudent(@RequestBody RequestStudent requestStudent){
+        return studentService.updateStudent(requestStudent);
+    }
+
+    @PutMapping(value = "/deleteStudent")
+    public ResponseStatus deleteStudent(@RequestParam("studentId") Long studentId){
+        return studentService.deleteStudent(studentId);
     }
 }

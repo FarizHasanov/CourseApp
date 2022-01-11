@@ -9,10 +9,10 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Data
-@Table(name = "student")
+@Table(name = "teacher")
 @Entity
 @DynamicInsert
-public class Student {
+public class Teacher {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,6 +21,7 @@ public class Student {
     private Date dob;
     private String address;
     private String phone;
+    private Integer workExperience;
     @CreationTimestamp
     private Date dataDate;
     @ColumnDefault(value = "1")

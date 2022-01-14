@@ -1,4 +1,4 @@
-package az.com.company.service;
+package az.com.company.service.inter;
 
 import az.com.company.request.RequestStudent;
 import az.com.company.response.ResponseStatus;

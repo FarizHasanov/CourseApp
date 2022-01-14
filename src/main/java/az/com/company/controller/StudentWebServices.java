@@ -4,7 +4,7 @@ import az.com.company.request.RequestStudent;
 import az.com.company.response.ResponseStatus;
 import az.com.company.response.ResponseStudent;
 import az.com.company.response.ResponseStudentList;
-import az.com.company.service.StudentService;
+import az.com.company.service.inter.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

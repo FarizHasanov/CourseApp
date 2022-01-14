@@ -55,7 +55,7 @@ public class StudentDaoImpl implements StudentDao {
 
     public void deleteStudent(Long studentId) throws Exception {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-        String sql = "DELETE FROM  STUDENT WHERE ID=?";
+        String sql = "UPDATE STUDENT SET ACTIVE=0 WHERE ID=?";
         jdbcTemplate.update(sql, studentId);
     }
 

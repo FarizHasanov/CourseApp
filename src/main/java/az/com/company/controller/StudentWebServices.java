@@ -1,6 +1,7 @@
 package az.com.company.controller;
 
 import az.com.company.request.RequestStudent;
+import az.com.company.request.RequestToken;
 import az.com.company.response.ResponseStatus;
 import az.com.company.response.ResponseStudent;
 import az.com.company.response.ResponseStudentList;
@@ -16,8 +17,8 @@ public class StudentWebServices {
     private StudentService studentService;
 
     @RequestMapping(value = "/getStudentList", method = {RequestMethod.GET, RequestMethod.POST})
-    public ResponseStudentList getStudentList() {
-        return studentService.getStudentList();
+    public ResponseStudentList getStudentList(@RequestBody RequestToken requestToken) {
+        return studentService.getStudentList(requestToken);
     }
 
     @GetMapping(value = "/getStudentById")

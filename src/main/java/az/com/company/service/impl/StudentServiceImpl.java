@@ -1,9 +1,12 @@
 package az.com.company.service.impl;
 
 import az.com.company.enums.EnumAvailableStatus;
+import az.com.company.model.LoginCompany;
 import az.com.company.model.Student;
+import az.com.company.repository.LoginCompanyDao;
 import az.com.company.repository.StudentDao;
 import az.com.company.request.RequestStudent;
+import az.com.company.request.RequestToken;
 import az.com.company.response.ResponseStatus;
 import az.com.company.response.ResponseStudent;
 import az.com.company.response.ResponseStudentList;
@@ -25,13 +28,27 @@ public class StudentServiceImpl implements StudentService {
     @Autowired
     private StudentDao studentDao1;
 
+    @Autowired
+    private LoginCompanyDao loginCompanyDao;
+
     @Override
-    public ResponseStudentList getStudentList() {
+    public ResponseStudentList getStudentList(RequestToken requestToken) {
         ResponseStudentList response = new ResponseStudentList();
         List<ResponseStudent> responseStudentList = new ArrayList<>();
+        Long userId=requestToken.getUserId();
+        String token = requestToken.getToken();
         try {
 //            List<Student> studentList = studentDao.getStudentList();
-            List<Student> studentList=studentDao1.findAllByActive(EnumAvailableStatus.ACTIVE.getValue());
+            if (token == null) {
+                response.setStatus(new ResponseStatus(ExceptionConstants.INVALID_REQUEST_DATA, "Invalid request data"));
+                return response;
+            }
+            LoginCompany loginCompany = loginCompanyDao.findLoginCompanyByIdAndTokenAndActive(userId,token, EnumAvailableStatus.ACTIVE.getValue());
+            if (loginCompany == null) {
+                response.setStatus(new ResponseStatus(ExceptionConstants.INVALID_TOKEN, "Invalid token"));
+                return response;
+            }
+            List<Student> studentList = studentDao1.findAllByActive(EnumAvailableStatus.ACTIVE.getValue());
             if (studentList.isEmpty()) {
                 response.setStatus(new ResponseStatus(ExceptionConstants.STUDENT_NOT_FOUND, "Student not found"));
                 return response;
@@ -64,7 +81,7 @@ public class StudentServiceImpl implements StudentService {
                 return response;
             }
 //            Student student = studentDao.getStudentById(studentId);
-            Student student=studentDao1.findStudentByIdAndActive(studentId, EnumAvailableStatus.ACTIVE.getValue());
+            Student student = studentDao1.findStudentByIdAndActive(studentId, EnumAvailableStatus.ACTIVE.getValue());
             if (student == null) {
                 response.setStatus(new ResponseStatus(ExceptionConstants.STUDENT_NOT_FOUND, "Student not found"));
                 return response;
@@ -91,7 +108,17 @@ public class StudentServiceImpl implements StudentService {
         Date dob = requestStudent.getDob();
         String address = requestStudent.getAddress();
         String phone = requestStudent.getPhone();
+        Long userId=requestStudent.getUserId();
+        String token = requestStudent.getToken();
         try {
+            if (token == null) {
+                return new ResponseStatus(ExceptionConstants.INVALID_REQUEST_DATA, "Invalid request data");
+            }
+            LoginCompany loginCompany = loginCompanyDao.findLoginCompanyByIdAndTokenAndActive(userId,token, EnumAvailableStatus.ACTIVE.getValue());
+            if (loginCompany == null) {
+                return new ResponseStatus(ExceptionConstants.INVALID_TOKEN, "Invalid token");
+
+            }
             if (name == null || surname == null) {
                 return new ResponseStatus(ExceptionConstants.INVALID_REQUEST_DATA, "Invalid request data");
             }
@@ -125,7 +152,7 @@ public class StudentServiceImpl implements StudentService {
             if (studentId == null || name == null || surname == null) {
                 return new ResponseStatus(ExceptionConstants.INVALID_REQUEST_DATA, "Invalid request data");
             }
-            Student student = studentDao1.findStudentByIdAndActive(studentId,EnumAvailableStatus.ACTIVE.getValue());
+            Student student = studentDao1.findStudentByIdAndActive(studentId, EnumAvailableStatus.ACTIVE.getValue());
             if (student == null) {
                 responseStatus = new ResponseStatus(ExceptionConstants.STUDENT_NOT_FOUND, "Student not found");
                 return responseStatus;
@@ -153,7 +180,7 @@ public class StudentServiceImpl implements StudentService {
                 responseStatus = new ResponseStatus(ExceptionConstants.INVALID_REQUEST_DATA, "Invalid request data");
                 return responseStatus;
             }
-            Student student = studentDao1.findStudentByIdAndActive(studentId,EnumAvailableStatus.ACTIVE.getValue());
+            Student student = studentDao1.findStudentByIdAndActive(studentId, EnumAvailableStatus.ACTIVE.getValue());
             if (student == null) {
                 responseStatus = new ResponseStatus(ExceptionConstants.STUDENT_NOT_FOUND, "Student not found");
                 return responseStatus;

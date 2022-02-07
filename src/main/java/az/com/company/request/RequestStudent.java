@@ -12,4 +12,6 @@ public class RequestStudent {
     private Date dob;
     private String address;
     private String phone;
+    private Long userId;
+    private String token;
 }
